@@ -1,0 +1,59 @@
+<!-- views/deviation.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Standard Deviation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cryptocurrency Standard Deviation</h1>
+
+    <!-- Back Button -->
+    <button onclick="window.location.href='/'">Go Back to Home</button>
+
+    <!-- Display Result -->
+    <div id="result">
+        <% if (deviationData) { %>
+            <h2><%= deviationData.coin.charAt(0).toUpperCase() + deviationData.coin.slice(1) %> Standard Deviation:</h2>
+            <p>Standard Deviation: $<%= deviationData.deviation %></p>
+            <h2>Select a Different Cryptocurrency:</h2>
+        <% } else { %>
+            <h2>Select a Cryptocurrency:</h2>
+        <% } %>
+    </div>
+
+    <!-- Cryptocurrency Buttons -->
+    <button onclick="window.location.href='/deviation?coin=bitcoin'">Bitcoin</button>
+    <button onclick="window.location.href='/deviation?coin=ethereum'">Ethereum</button>
+    <button onclick="window.location.href='/deviation?coin=matic-network'">Matic</button>
+</body>
+</html>
