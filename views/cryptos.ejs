@@ -1,0 +1,65 @@
+<!-- views/cryptos.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Prices</title>
+    <style>
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Cryptocurrency Prices</h1>
+
+    <!-- Back Button -->
+    <div style="text-align: center;">
+        <button onclick="window.location.href='/'">Go Back to Home</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Coin</th>
+                <th>Price (USD)</th>
+                <th>Market Cap (USD)</th>
+                <th>24h Change (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% cryptos.forEach(crypto => { %>
+                <tr>
+                    <td><%= crypto.coin %></td>
+                    <td><%= crypto.price_usd.toFixed(2) %></td>
+                    <td><%= crypto.market_cap_usd.toLocaleString() %></td>
+                    <td><%= crypto.change_24h.toFixed(2) %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>
