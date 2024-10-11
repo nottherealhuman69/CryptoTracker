@@ -21,14 +21,29 @@ app.get('/', (req, res) => {
 // Route to display cryptocurrency data
 // server.js
 // Update the route to render the data on the stats page
+app.get('/cryptos', async (req, res) => {
+    try {
+        // Fetch the latest cryptocurrency data from the database
+        const cryptos = await Crypto.find({}).sort({ createdAt: -1 }); // Fetch all cryptos, sorted by the most recent
+
+        // Render the cryptos page with the fetched data
+        return res.render('cryptos', { cryptos: cryptos }); // Pass the fetched data to the view
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        return res.status(500).send('An error occurred while fetching cryptocurrencies');
+    }
+});
+
+
+// Update the /stats route
 app.get('/stats', async (req, res) => {
-    const coin = req.query.coin; // Get the coin name from query params
+    const coin = req.query.coin;
     let cryptoData = null;
 
     if (coin) {
         try {
-            // Fetch the cryptocurrency data from the database
-            cryptoData = await Crypto.findOne({ coin });
+            // Find the latest record for the specified cryptocurrency
+            cryptoData = await Crypto.findOne({ coin }).sort({ createdAt: -1 }); // Sort by creation date descending
 
             if (!cryptoData) {
                 return res.status(404).json({ error: 'Cryptocurrency not found' });
@@ -40,7 +55,8 @@ app.get('/stats', async (req, res) => {
 
     // Render the stats page with or without crypto data
     return res.render('stats', {
-        coin: coin || null,
+        error: null,
+        coin: coin,
         price: cryptoData ? cryptoData.price_usd : null,
         marketCap: cryptoData ? cryptoData.market_cap_usd : null,
         change_24h: cryptoData ? cryptoData.change_24h : null
@@ -48,65 +64,48 @@ app.get('/stats', async (req, res) => {
 });
 
 
-// Function to calculate the standard deviation
 function std(values) {
     const n = values.length;
-    if (n <= 1) return 0;
-    const mean = values.reduce((acc, val) => acc + val, 0) / n;
-    const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
+
+    // If there are no values, return 0
+    if (n === 0) return 0;
+
+    // Calculate the mean
+    const mean = values.reduce((sum, val) => sum + val, 0) / n;
+
+    // Calculate the variance
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
+
+    // Return the standard deviation
     return Math.sqrt(variance);
 }
 
-// API to render the deviation page
+// Update the /deviation route
 app.get('/deviation', async (req, res) => {
     const coin = req.query.coin; // Get the coin name from query params
     let deviationData = null;
 
     if (coin) {
         try {
-            // Fetch the records for the specified coin from the database
-            const cryptoData = await Crypto.find({ coin })
-                .sort({ createdAt: -1 }); // Sort by createdAt to get the latest records
+            // Fetch the last 100 records or fewer if there are not enough records
+            const records = await Crypto.find({ coin }).sort({ createdAt: -1 }).limit(100);
+            const prices = records.map(record => record.price_usd);
+            const deviation = std(prices); // Calculate the standard deviation
 
-            // If there are no records for the coin
-            if (cryptoData.length === 0) {
-                return res.status(404).json({ error: 'No records found for the specified cryptocurrency' });
-            }
-
-            // Limit to the last 100 records or however many there are
-            const limitedData = cryptoData.slice(0, 100);
-            const prices = limitedData.map(record => record.price_usd);
-
-            // Calculate the standard deviation
-            const deviation = std(prices);
-
-            // Set deviation data
             deviationData = {
                 coin: coin,
-                deviation: parseFloat(deviation.toFixed(2))
+                deviation: deviation
             };
         } catch (err) {
-            console.error("Error fetching deviation data:", err); // Log the error
-            return res.status(500).json({ error: 'An error occurred while fetching data' });
+            console.error(err); // Log the error for debugging
+            return res.status(500).send('An error occurred while fetching deviation data');
         }
     }
 
-    // Render the deviation page with or without deviation data
-    return res.render('deviation', {
-        deviationData: deviationData,
-        coin: coin
-    });
+    // Render the deviation page with the deviation data
+    return res.render('deviation', { deviationData: deviationData });
 });
 
-
-app.get('/cryptos', async (req, res) => {
-    try {
-        const cryptos = await Crypto.find({});
-        res.render('cryptos', { cryptos });
-    } catch (err) {
-        res.status(500).send('Error fetching data');
-    }
-});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
