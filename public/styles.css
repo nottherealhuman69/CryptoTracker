@@ -1,0 +1,83 @@
+body {
+    background-color: #121212; /* Darker background for dark theme */
+    color: #ffffff; /* Light text for contrast */
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+}
+
+h1 {
+    margin-bottom: 20px;
+    text-align: center; /* Center the heading */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center form items */
+    width: 300px; /* Set a fixed width for form */
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    padding: 10px;
+    margin: 10px 0; /* Margin for spacing between inputs */
+    border: 1px solid #0077ff; /* Blue border */
+    border-radius: 5px;
+    width: 100%; /* Full width */
+    background-color: #1e1e1e; /* Dark background for inputs */
+    color: #ffffff; /* Light text in inputs */
+}
+
+button {
+    padding: 10px 15px;
+    margin: 10px; /* Space between buttons */
+    border: none;
+    border-radius: 5px;
+    background-color: #0056b3; /* Dark blue */
+    color: #ffffff; /* White text */
+    cursor: pointer;
+    width: 100%; /* Full width for buttons */
+}
+
+button:hover {
+    background-color: #004494; /* Darker blue on hover */
+}
+
+.alert {
+    color: #ff4c4c; /* Alert text color */
+    margin: 10px 0;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row; /* Horizontal alignment */
+    justify-content: center; /* Center buttons */
+    margin: 20px 0; /* Space around button container */
+}
+
+
+a {
+    color: #0077ff; /* Blue links */
+    text-decoration: none; /* Remove underline from links */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline links on hover */
+}
+table {
+    width: 100%; /* Adjust table width */
+    border-collapse: separate; /* Allow spacing between borders */
+    border-spacing: 0 5px; /* Add space between rows */
+    margin: 20px 0; /* Space above and below the table */
+}
+
+th, td {
+    padding: 10px; /* Space within cells */
+    text-align: center; /* Center align text in cells */
+}
