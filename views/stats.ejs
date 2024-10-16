@@ -5,58 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Stats</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            margin: 10px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        .error {
-            color: red;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Cryptocurrency Stats</h1>
+    <div class="container">
+        <h1>Cryptocurrency Stats</h1>
 
-    <!-- Back Button -->
-    <button onclick="window.location.href='/'">Go Back to Home</button>
+        <!-- Back Button -->
+        <button class="back-button" onclick="window.location.href='/home'">Go Back to Home</button>
 
-    <!-- Display Result -->
-    <div id="result">
-        <% if (coin) { %>
-            <h2><%= coin.charAt(0).toUpperCase() + coin.slice(1) %> Stats:</h2>
-            <p>Price: $<%= price ? price.toLocaleString() : 'N/A' %></p>
-            <p>Market Cap: $<%= marketCap ? marketCap.toLocaleString() : 'N/A' %></p>
-            <p>24h Change: <%= change_24h ? change_24h : 'N/A' %>%</p>
-            <h2>Select a Different Cryptocurrency:</h2>
-        <% } else { %>
-            <h2>Select a Cryptocurrency:</h2>
-        <% } %>
+        <!-- Display Result -->
+        <div id="result">
+            <% if (coin) { %>
+                <h2><%= coin.charAt(0).toUpperCase() + coin.slice(1) %> Stats:</h2>
+                <p>Price: $<%= price ? price.toLocaleString() : 'N/A' %></p>
+                <p>Market Cap: $<%= marketCap ? marketCap.toLocaleString() : 'N/A' %></p>
+                <p>24h Change: <%= change_24h ? change_24h : 'N/A' %>%</p>
+                <h2>Select a Different Cryptocurrency:</h2>
+            <% } else { %>
+                <h2>Select a Cryptocurrency:</h2>
+            <% } %>
+        </div>
+
+        <!-- Cryptocurrency Buttons -->
+        <div class="button-container">
+            <button onclick="window.location.href='/stats?coin=bitcoin'">Bitcoin</button>
+            <button onclick="window.location.href='/stats?coin=ethereum'">Ethereum</button>
+            <button onclick="window.location.href='/stats?coin=matic-network'">Matic</button>
+        </div>
     </div>
-
-    <!-- Cryptocurrency Buttons -->
-    
-    <button onclick="window.location.href='/stats?coin=bitcoin'">Bitcoin</button>
-    <button onclick="window.location.href='/stats?coin=ethereum'">Ethereum</button>
-    <button onclick="window.location.href='/stats?coin=matic-network'">Matic</button>
 </body>
 </html>

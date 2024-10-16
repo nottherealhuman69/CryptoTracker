@@ -5,33 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Price Tracker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            margin: 10px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <h1>Welcome to the Crypto Price Tracker!</h1>
 
     <!-- Navigation Buttons -->
-    <button onclick="window.location.href='/cryptos'">Go to Crypto Prices</button>
-    <button onclick="window.location.href='/stats'">Go to Stats</button>
-    <button onclick="window.location.href='/deviation'">Go to Standard Deviation</button>
+    <div class="button-container">
+        <button onclick="window.location.href='/cryptos'">Go to Crypto Prices</button>
+        <button onclick="window.location.href='/stats'">Go to Stats</button>
+        <button onclick="window.location.href='/deviation'">Go to Standard Deviation</button>
+    </div>
 </body>
 </html>
