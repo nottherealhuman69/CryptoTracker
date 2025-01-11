@@ -8,19 +8,33 @@
 </head>
 <body>
   <div class="form-container">
-    <form action="/login" method="POST">
-      <h2>Login</h2>
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-
-    <!-- Register button -->
-    <p>Don't have an account? <a href="/register">Register here</a></p>
-
-    <% if (error_msg) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
-    <% } %>
+    <div class="container">
+      <h2 style="text-align: center;">Login</h2>
+      
+      <!-- Display any error messages -->
+      <div class="messages">
+          <% if(typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+              <div class="error"><%= error_msg %></div>
+          <% } %>
+      </div>
+      
+      <form action="/login" method="POST">
+          <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" required>
+          </div>
+          
+          <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required>
+          </div>
+          
+          <button type="submit" class="btn">Login</button>
+          
+          <a href="/register" class="btn btn-register">Register</a>
+          
+          <a href="/forgot-password" class="forgot-password">Forgot Password?</a>
+      </form>
   </div>
 </body>
 </html>

@@ -1,7 +1,8 @@
 // server.js
 const mongoose = require('mongoose');
 const Crypto = require('./models/Crypto'); // Import Crypto model
-const fetchCryptoData = require('./fetchCryptoData');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
@@ -10,12 +11,13 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/User'); // Assuming models directory
 const flash = require('connect-flash');
 require('./cronJob'); // Import the cron job
+require('dotenv').config();
 
 const app = express();
 
 // Session Middleware
 app.use(session({
-    secret: 'human@69420', // Replace with a strong secret
+    secret: process.env.SESSION_SECRET, // Replace with a strong secret
     resave: false,
     saveUninitialized: true
 }));
@@ -81,6 +83,105 @@ mongoose.connect('mongodb+srv://suryan_pinnoju:Human69420@info.u9bxg.mongodb.net
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.error("Could not connect to MongoDB", err));
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER, // Replace with your email
+        pass: process.env.EMAIL_PASS // Use app-specific password from Google
+    }
+});
+
+app.get('/forgot-password', (req, res) => {
+    res.render('forgot-password');
+});
+
+app.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            req.flash('error', 'No account with that email exists');
+            return res.redirect('/forgot-password');
+        }
+
+        // Generate reset token using crypto
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        
+        // Save token to user
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        await user.save();
+
+        // Send email
+        const resetUrl = `http://${req.headers.host}/reset-password/${resetToken}`;
+        const mailOptions = {
+            to: user.email,
+            from: 'suryanpinnoju@gmail.com',
+            subject: 'Password Reset',
+            text: `You are receiving this because you (or someone else) requested a password reset.
+                  Please click on the following link to complete the process:
+                  ${resetUrl}
+                  If you did not request this, please ignore this email.`
+        };
+
+        await transporter.sendMail(mailOptions);
+        req.flash('success', 'Reset email sent');
+        res.redirect('/login');
+    } catch (error) {
+        console.error('Error:', error);
+        req.flash('error', 'An error occurred');
+        res.redirect('/forgot-password');
+    }
+});
+
+app.get('/reset-password/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            req.flash('error', 'Password reset token is invalid or has expired');
+            return res.redirect('/forgot-password');
+        }
+
+        res.render('reset-password', { token: req.params.token });
+    } catch (error) {
+        console.error('Error:', error);
+        res.redirect('/forgot-password');
+    }
+});
+
+app.post('/reset-password/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            req.flash('error', 'Password reset token is invalid or has expired');
+            return res.redirect('/forgot-password');
+        }
+
+        // Set new password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.password, salt);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        req.flash('success', 'Password has been reset');
+        res.redirect('/login');
+    } catch (error) {
+        console.error('Error:', error);
+        res.redirect('/forgot-password');
+    }
+});
+
+
 app.get('/home', ensureAuthenticated, (req, res) => res.render('index'));
 // Show registration page
 app.get('/register', (req, res) => res.render('register'));
@@ -128,6 +229,15 @@ app.post('/login', (req, res, next) => {
         failureRedirect: '/login', // Change this to '/login'
         failureFlash: true
     })(req, res, next);
+});
+
+app.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login');
+    });
 });
 
 // Route to display cryptocurrency data
