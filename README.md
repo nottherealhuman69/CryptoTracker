@@ -76,9 +76,7 @@ Although the main API endpoints are public, creating an account enhances the use
    ```
    EMAIL_USER=your-gmail@gmail.com
    EMAIL_PASS=your-app-password
-   MONGO_URI=your-mongodb-connection-string
    SESSION_SECRET=your-session-secret
-   DOMAIN=your-domain-or-localhost
    ```
 
 4. **Start the server**:
@@ -89,7 +87,7 @@ Although the main API endpoints are public, creating an account enhances the use
 ## Deployment
 
 - The application is deployed on **Heroku** with continuous updates from the GitHub repository.
-- Access the live application: [Your Heroku App URL]
+- Access the live application: cryptotracker-y6o8.onrender.com
 
 ## Security Features
 
